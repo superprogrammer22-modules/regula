@@ -10,6 +10,7 @@ This document tracks known issues, current limitations, and planned future featu
     * *Workaround:* Stick to default Ttk themes or use classic Tk widgets for custom coloring.
 * **Root Window Configuration:** The `Window()` function might be unable to configure certain properties (like changing the title after the window has been initialized) without requiring a `Run()` restart, depending on the OS and Tkinter version.
 * **Grid Expansion Initialization:** The internal grid configuration in `_handle_layout` may not always correctly handle subsequent widgets placed via grid after the initial widget, requiring manual `columnconfigure` and `rowconfigure` calls on the parent frame for complex layouts.
+* **Configure function:** The configure function must use **Tkinter**'s default arguments: **bg_color** must be **bg**, **content** must be **text**, **content_color** must be **fg**, etc.
 
 ---
 
