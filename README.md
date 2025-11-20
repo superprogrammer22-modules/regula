@@ -214,6 +214,10 @@ sg.Run()
 
 ```
 
+---
+
+Check it out on [PyPI](https://pypi.org/project/regula/)
+
 # 🤝 Contributing
 Contributions, issues, and feature requests are welcome! Feel free to check the issues page.
 
