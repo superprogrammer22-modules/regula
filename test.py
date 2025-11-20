@@ -1,0 +1,187 @@
+import regula as sg
+import random
+import sys # Needed for file reading error handling
+
+sg.Window(title="TNotebook Example", geometry="890x380", bg="#E6E6FA")
+
+# --- Global Widgets for Tab 7 ---
+# Need a global reference to the Textarea so the button command can update it
+text_output_area = None
+
+def open_file_and_read():
+    """Opens a file dialog, reads the selected file, and updates Tab 7 Textarea."""
+    global text_output_area
+    
+    # Use sg.FileOpener() to open the native OS file dialog.
+    filepath = sg.FileOpener(
+        ('Text Files', '*.txt'), 
+        ('All Files', '*.*')
+    )
+
+    if filepath:
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # Clear Textarea and insert new content
+            text_output_area.delete('1.0', sg.tk.END)
+            text_output_area.insert('1.0', content)
+            
+            sg.Info("File Loaded", f"Content from file loaded successfully.")
+            
+        except FileNotFoundError:
+            sg.Error("Error", f"File not found: {filepath}")
+        except Exception as e:
+            sg.Error("Read Error", f"An error occurred while reading the file: {e}")
+    else:
+        sg.Info("Cancelled", "File selection was cancelled.")
+
+# --- Tab Setup ---
+
+notebook = sg.Notebook(expand=True)
+# Tabs 1-6 remain the same size for consistency
+tab1 = sg.Frame(notebook, 'Button, Label and Info', expand=True, tab_color='lightgreen', _height=350, _width=500)
+tab2 = sg.Frame(notebook, 'Textarea and Error', expand=True, tab_color='lightgreen', _height=350, _width=500)
+tab3 = sg.Frame(notebook, 'Entry and Scale', expand=True, tab_color='lightgreen', _height=350, _width=500)
+tab4 = sg.Frame(notebook, 'Listbox', expand=True, tab_color='lightgreen', _height=350, _width=500)
+tab5 = sg.Frame(notebook, 'Ask', expand=True, tab_color='lightgreen', _height=350, _width=500)
+tab6 = sg.Frame(notebook, 'Wait and Configure', expand=True, tab_color='lightgreen', _height=350, _width=500)
+
+# --- Tab 7: FileOpener ---
+tab7 = sg.Frame(notebook, 'FileOpener', expand=True, tab_color='#ADD8E6', _height=350, _width=500)
+
+
+# --- Tab 1 Content ---
+def to_do():
+    sg.Info("Yay!", "Haha!")
+sg.Label(tab1, line=0, position=0, align='left', expand=True, bold=False, content='Press the button: ')
+sg.Button(tab1, _command=to_do, line=0, position=1, align='center', expand=True, _width=5, _height=0)
+
+# --- Tab 2 Content ---
+texter = sg.Textarea(tab2, 'Do not enter text!', expand=True)
+def get_texter():
+    global texter
+    results = sg.Get(texter)
+    if not results == 'Do not enter text!':
+        sg.Error('Hey!', f'Hey! you should not enter text here, especially not "{results}"!')
+    else:
+        sg.Error('Hey!', 'Thanks for not entering text, but WHY DID YOU PRESS THE BUTTON?!')
+sg.Button(tab2, "And don't press here", expand=True, _command=get_texter)
+
+# --- Tab 3 Content ---
+sg.Label(tab3, 'Your username: ', line=0, position=0, expand=True, align='left')
+username = sg.Entry(tab3, 'superprogrammer', expand=True, align='center', line=0, position=1)
+sg.Label(tab3, 'Your age: ', line=1, position=0, expand=True, align='left')
+age = sg.Scale(tab3, 5, 100, line=1, position=1, expand=True, align='center')
+
+def get_settings():
+    global username, age
+    yuser = sg.Get(username)
+    yager = sg.Get(age)
+    yager = int(yager)
+    if yuser:
+        if yager >= 18:
+            sg.Info('Hello!', f'Hello!, {yuser}, you are an adult!')
+        else:
+            sg.Info('Hello!', f'Hello, {yuser}, you are a child!')
+    else:
+        sg.Info('Hey!', f'You need to enter a username!')
+
+sg.Button(tab3, 'Get Data', _command=get_settings, position=1, line=2, expand=True, align='center')
+
+# --- Tab 4 Content ---
+my_list = sg.Listbox(tab4, ['Regula', 'Tkinter', 'Pygame'], line=1, position=0, align='left', expand=True)
+
+def get_gui():
+    global my_list
+    results = sg.Get(my_list)
+    if not results == 'Regula':
+        sg.Error('Hey!', f'Hey! Regula is better than {results}!')
+    else:
+        sg.Info('Yeah!', 'Yeah! Regula is the best!')
+
+sg.Button(tab4, 'Choose', _command=get_gui, line=1, position=2)
+
+# --- Tab 5 Content (Corrected IMC Logic) ---
+def ask():
+    name = sg.Ask('Name', 'Name:', 'string')
+    if name:
+        age = sg.Ask('Age', 'Age:', 'int')
+        if age:
+            if age > 17:
+                weight = sg.Ask('Weight', 'Weight (kg):', 'float')
+                if weight:
+                    height = sg.Ask('Height', 'Height in meters:', 'float')
+                    if height and height > 0:
+                        
+                        def imc():
+                            # Corrected BMI calculation: weight / (height ** 2)
+                            return weight / (height**2)
+                        
+                        healthy = imc()
+                        
+                        if healthy > 18.4 and healthy < 25.0:
+                            status = 'healthy'
+                        elif healthy < 18.5:
+                            status = 'not so healthy, too slim'
+                        elif healthy >= 25.0 and healthy < 30.0:
+                            status = 'not so healthy, a little overweight (or too many muscles)'
+                        else:
+                            status = 'not healthy, a lot overweight (or too many muscles)'
+
+                        healthy = round(healthy, 1)
+
+                        sg.Info('Health Condition', f'We calculated your IMC, {name}, and it returned: {status} (Your IMC is {healthy})')
+            
+            else:
+                sg.Info('Sorry', f"Sorry, {name}, but we can't calculate the IMC of kids")
+                return
+sg.Button(tab5, 'Calculate health condition', _command=ask, position=0, line=0, expand=True, align='center')
+
+# --- Tab 6 Content ---
+def changer():
+    timer = random.randint(1500, 3000)
+    sg.Wait(timer, change)
+
+my_Button = sg.Button(tab6, 'I will change some seconds after you click me!', 12, 'black', _command=changer)
+
+def change():
+    global my_Button
+    colors = ['red', 'green', 'yellow', 'blue', 'orange']
+    color = random.choice(colors)
+    color2 = random.choice(colors)
+    if color2 == color:
+        new_colors = colors.copy()
+        new_colors.remove(color)
+        color2 = random.choice(new_colors)
+        
+    messages = ['Changed! (I can change again)', 'Told ya I would change!', 'CHAAANGEED!']
+    message = random.choice(messages)
+    sg.Configure(my_Button, text=message, fg=color, bg=color2)
+
+
+# --- Tab 7 Content (FileOpener) ---
+
+# Button to trigger the file dialog
+sg.Button(
+    parent=tab7,
+    content="Select and Load Text File (.txt)", 
+    _command=open_file_and_read,
+    line=0,
+    position=0,
+    align='n'
+)
+
+# Textarea to display the file content
+text_output_area = sg.Textarea(
+    parent=tab7,
+    initial_content="File content will appear here here after you select a file...",
+    line=1,
+    position=0,
+    height=15,
+    width=75,
+    expand=True,
+    align='center' 
+)
+
+sg.Run()
