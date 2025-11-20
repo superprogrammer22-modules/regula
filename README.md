@@ -18,6 +18,8 @@ Assuming you have Python 3.8+ installed:
 ```bash
 pip install regula
 
+```
+
 # Example Usage
 
 ```python
