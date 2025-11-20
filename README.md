@@ -20,7 +20,7 @@ pip install regula
 
 ```
 
-# Example Usage
+## Example Usage
 
 ```python
 
