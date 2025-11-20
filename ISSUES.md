@@ -1,4 +1,4 @@
-# 🐛 Known Issues & Future Development for Regula App Toolkit (v0.1.1)
+# 🐛 Known Issues & Future Development for Regula (v0.1.1)
 
 This document tracks known issues, current limitations, and planned future features for the Regula App Toolkit.
 
