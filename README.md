@@ -17,7 +17,6 @@ Assuming you have Python 3.8+ installed:
 
 ```bash
 pip install regula
-```
 
 # Example Usage
 
@@ -210,3 +209,11 @@ text_output_area = sg.Textarea(
 )
 
 sg.Run()
+
+```
+
+# 🤝 Contributing
+Contributions, issues, and feature requests are welcome! Feel free to check the issues page.
+
+# 📄 License
+Distributed under the MIT License. See LICENSE for more information.
